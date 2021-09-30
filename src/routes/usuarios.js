@@ -13,9 +13,9 @@ app.post('/api/v1/usuarios', function (req, res) {
 
   usersDAO.post(usuario, function (err, user) {
     if (err) {
-      res.send({
+      return res.send({
         'error': true,
-        'err': err
+        'msg': err
       });
     } else {
       res.json(user);
@@ -43,7 +43,7 @@ app.get('/api/v1/usuarios/:id', function (req, res) {
     if (err) {
       return res.send({
         'error': true,
-        'err': err
+        'msg': err
       });
     } else {
       res.json(user);
@@ -52,13 +52,15 @@ app.get('/api/v1/usuarios/:id', function (req, res) {
 });
 
 app.put('/api/v1/usuarios', function (req, res) {
-  let user = req.body;
-
-  usersDAO.put(user, function (err, userAct) {
-      if (err) { 
-        return res.status(400).json(err) 
-      };
-      res.json(userAct);
+  usersDAO.put(req.body, function (err, userUpdated) {
+      if (err) {
+        return res.send({
+          'error': true,
+          'msg': err
+        });
+      } else {
+        res.json(userUpdated);
+      }
   });
 });
 
@@ -69,7 +71,6 @@ app.delete('/api/v1/usuarios/:id', function (req, res) {
       if (err) {
           return res.status(400).json(err)
       }
-      console.log(`Usuario: "${usuario.nombre}" eliminado!`);
       res.json(usuario);
   });
 });

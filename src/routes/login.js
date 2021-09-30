@@ -7,15 +7,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.post('/api/v1/login', function (req, res) {
-    let username = req.body.username;
-    let password = req.body.password;
-
+    const { username, password } = { ...req.body };
+    
     usersDAO.validateLogin(username, password, function (err, user) {
         if (err) {
-            res.send({ 'error': true, 'err': err });
-        }
-        else {
-        
+            return res.send({
+                'error': true,
+                'msg': err
+            });
+        } else {
             res.send({ 'error': false, 'user': user });
         }
     });
