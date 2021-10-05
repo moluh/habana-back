@@ -1,6 +1,6 @@
 function ProductosDAO(db) {
 
-    let ObjectId = require('mongodb').ObjectID;
+    let ObjectId = require('mongodb').ObjectId;
 
     if (false == (this instanceof ProductosDAO)) {
         console.log('WARNING: UserDAO constructor called without "new" operator');

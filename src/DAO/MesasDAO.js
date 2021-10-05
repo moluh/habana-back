@@ -1,6 +1,6 @@
 function MesasDAO(db) {
 
-    let ObjectId = require('mongodb').ObjectID;
+    let ObjectId = require('mongodb').ObjectId;
 
     if (false == (this instanceof MesasDAO)) {
         console.log('WARNING: UserDAO constructor called without "new" operator');

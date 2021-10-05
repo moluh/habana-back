@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 
 function UserDAO(db) {
 
-  let ObjectId = require('mongodb').ObjectID;
+  let ObjectId = require('mongodb').ObjectId;
 
   if (false == (this instanceof UserDAO)) {
     console.log('WARNING: UserDAO constructor called without "new" operator');
