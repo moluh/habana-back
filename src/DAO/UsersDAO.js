@@ -28,8 +28,8 @@ function UserDAO(db) {
         users.insertOne(user, function (err, result) {
           if (err) return callback(err, null)
 
-          delete result.ops[0].password
-          return callback(null, result.ops[0]);
+          delete result
+          return callback(null, result);
         });
       }
     });
