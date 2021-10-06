@@ -57,17 +57,15 @@ MongoClient.connect('mongodb://' + mdbconf.host + ':' + mdbconf.port + '/' + mdb
     });
 
     socket.on('getAll', function () {
-      console.log('======================');
-      console.log('GET PEDIDOS ALL SOCKET');
-
+      console.log('--> getAll socket <--');
       pedidosDAO.getAll(function (err, peds) {
         if (err) return console.log('Error al obtener los pedidos');
 
         io.emit('getAll', peds);
       });
     });
-  });
 
+  });
 
   http.listen(process.env.PORT, () => {
     console.log('Escuchando en el puerto:', process.env.PORT);
