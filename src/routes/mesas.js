@@ -2,11 +2,12 @@ const express = require('express');
 const app = express();
 const { mesasDAO } = require('../server');
 const bodyParser = require('body-parser');
+const { adminMW } = require('../middlewares/isAllowed');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post('/api/v1/mesas', function (req, res) {
+app.post('/api/v1/mesas', adminMW, function (req, res) {
     let mesa = req.body;
 
     mesasDAO.post(mesa, function (err, mesa) {
@@ -21,7 +22,7 @@ app.post('/api/v1/mesas', function (req, res) {
     });
 });
 
-app.get('/api/v1/mesas', function (req, res) {
+app.get('/api/v1/mesas',adminMW, function (req, res) {
     mesasDAO.getAll(function (err, mesa) {
         if (err) {
             return res.status(400).json(err)
