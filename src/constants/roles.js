@@ -1,0 +1,23 @@
+const SUPERADMIN = 'SUPERADMIN'
+const ADMIN = 'ADMIN'
+const SUPERVISOR = 'SUPERVISOR'
+const EMPLEADO = 'EMPLEADO'
+const COCINERO = 'COCINERO'
+const MOZO = 'MOZO'
+const EXTERNO = 'EXTERNO'
+const USUARIO = 'USUARIO'
+const INVITADO = 'INVITADO'
+const TESTER = 'TESTER'
+
+module.exports = {
+    SUPERADMIN,
+    ADMIN,
+    COCINERO,
+    MOZO,
+    SUPERVISOR,
+    EMPLEADO,
+    EXTERNO,
+    USUARIO,
+    INVITADO,
+    TESTER
+}

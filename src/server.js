@@ -1,10 +1,12 @@
 /* Librerias necesarias para la aplicación */
+const dotenv = require('dotenv');
+dotenv.config()
 const config = require('./config/config');
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http, {
   cors: {
-    origin: "http://localhost",
+    origin: "http://localhost:8100",
     methods: ["GET", "POST"]
   }
 });
@@ -17,10 +19,10 @@ const bodyParser = require('body-parser');
 const mdbconf = config.mdbconf;
 
 // IMPORTACION DE LOS DAO´S
-const userDAO = require('./DAO/UsersDAO').UserDAO;
-const mesaDAO = require('./DAO/MesasDAO').MesasDAO;
-const prodDAO = require('./DAO/ProductosDAO').ProductosDAO;
-const pedidoDAO = require('./DAO/PedidosDAO').PedidosDAO;
+const userDAO = require('./dao/UsersDAO').UserDAO;
+const mesaDAO = require('./dao/MesasDAO').MesasDAO;
+const prodDAO = require('./dao/ProductosDAO').ProductosDAO;
+const pedidoDAO = require('./dao/PedidosDAO').PedidosDAO;
 
 app.use(cors())
 app.use(morgan('combined'));

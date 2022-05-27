@@ -1,4 +1,7 @@
+const dotenv = require('dotenv');
+dotenv.config();
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 function UserDAO(db) {
 
@@ -106,22 +109,51 @@ function UserDAO(db) {
   }
 
   this.validateLogin = function (username, password, callback) {
-    users.findOne({ 'username': username }, async function (err, foundUser) {
-      if (err) return callback(err, null);
-
-      if (foundUser) {
-        const isValidPassword = await bcrypt.compare(password, foundUser.password)
-
-        if (!isValidPassword)
-          callback("Sus datos no son correctos.", null);
-        else {
-          delete foundUser.password
-          callback(null, foundUser);
-        }
+    users.findOne({ 'username': username }, async function (err, usuario) {
+      // if (err) return callback(err, null);
+      if (err) {
+        return callback({
+          'error': true,
+          'msg': err
+        }, null);
 
       } else {
-        return callback("No se encontró ningún Usuario.", null)
+        
+        if (!usuario)
+          // Si no encuentra el usuario
+          return callback({
+            isLogged: false,
+            token: null,
+            error: "Datos incorrectos.",
+          }, null);
+
+        let validatePassword = await bcrypt.compareSync(password, usuario.password);
+
+        if (!validatePassword) {
+          // return res.status(401).send({ Error: "La contraseña no coincide."});
+          return callback({
+            isLogged: false,
+            token: null,
+            error: "Contraseña incorrectos.",
+          }, null);
+        }
+
+        const userWithOutPass = { ...usuario };
+        delete userWithOutPass.password;
+        
+        let token = jwt.sign(userWithOutPass, process.env.JWT_SECRET, {
+          expiresIn: process.env.JWT_EXPIRATION,
+        });
+
+        return callback(null, {
+          isLogged: true,
+          token,
+          expiresIn: process.env.JWT_EXPIRATION,
+          role: userWithOutPass.role,
+          activo: userWithOutPass.activo
+        });
       }
+
     });
   }
 

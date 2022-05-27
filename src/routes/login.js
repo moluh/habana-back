@@ -6,19 +6,16 @@ const { usersDAO } = require('../server');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post('/api/v1/login', function (req, res) {
+app.post('/api/v1/login', async function (req, res) {
     const { username, password } = { ...req.body };
-    
-    usersDAO.validateLogin(username, password, function (err, user) {
+    usersDAO.validateLogin(username, password, function (err, usuario) {
         if (err) {
-            return res.send({
-                'error': true,
-                'msg': err
-            });
+            return res.send(err);
         } else {
-            res.send({ 'error': false, 'user': user });
+            res.send(usuario);
         }
     });
+
 });
 
 module.exports = app;
