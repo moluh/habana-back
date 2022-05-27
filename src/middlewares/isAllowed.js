@@ -1,79 +1,28 @@
-const jwt =  require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
+const { ADMIN } = require("../constants/roles");
 const jwtSecret = process.env.JWT_SECRET;
 
-function adminMW(req, res, next) {
-    const authString = req.headers["authorization"];
+function isAllowed(requiredRoles = null) {
 
-    if (typeof authString === "string" && authString.indexOf(" ") > -1) {
-        const authArray = authString.split(" ");
-        const token = authArray[1];
-        jwt.verify(token, jwtSecret, async (err, decoded) => {
-            if (err)
-                res.status(403).send({
-                    ok: false,
-                    msg: "Token no válido: No tiene autorización para este recurso",
-                    error: err,
-                });
-            else if (decoded.role === "ADMIN") next();
-        });
-    } else {
-        res.status(403).send({
-            ok: false,
-            msg: "Token no válido.",
-        });
+    return function (req, res, next) {
+        // return next()
+        const authString = req.headers['authorization']
+
+        if (typeof authString === 'string' && authString.indexOf(' ') > -1) {
+            const authArray = authString.split(' ')
+            const token = authArray[1]
+            jwt.verify(token, jwtSecret, async (err, decoded) => {
+                if (err)
+                    return res.json({ error: "Token no válido." })
+
+                if (requiredRoles.some((role) => decoded.role === role || decoded.role === ADMIN))
+                    next()
+
+            })
+        } else {
+            return res.json({ error: "Usuario no logueado." })
+        }
     }
 }
 
-
-function mozoMW(req, res, next) {
-    const authString = req.headers["authorization"];
-    
-    if (typeof authString === "string" && authString.indexOf(" ") > -1) {
-        const authArray = authString.split(" ");
-        const token = authArray[1];
-        jwt.verify(token, jwtSecret, async (err, decoded) => {            
-            if (err)
-                res.status(403).send({
-                    ok: false,
-                    msg: "Token no válido: No tiene autorización para este recurso",
-                    error: err,
-                });
-            else if (decoded.role === "ADMIN" || decoded.role === "MOZO") next();
-        });
-    } else {
-        res.status(403).send({
-            ok: false,
-            msg: "Token no válido.",
-        });
-    }
-}
-
-
-function cocineroMW(req, res, next) {
-    const authString = req.headers["authorization"];
-
-    if (typeof authString === "string" && authString.indexOf(" ") > -1) {
-        const authArray = authString.split(" ");
-        const token = authArray[1];
-        jwt.verify(token, jwtSecret, async (err, decoded) => {
-            if (err)
-                res.status(403).send({
-                    ok: false,
-                    msg: "Token no válido: No tiene autorización para este recurso",
-                    error: err,
-                });
-            else if (decoded.role === "ADMIN" || decoded.role === "COCINERO") next();
-        });
-    } else {
-        res.status(403).send({
-            ok: false,
-            msg: "Token no válido.",
-        });
-    }
-}
-
-module.exports = {
-    adminMW,
-    mozoMW,
-    cocineroMW
-}
+module.exports.isAllowed = isAllowed;

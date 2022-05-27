@@ -4,6 +4,8 @@ const {
     pedidosDAO
 } = require('../server');
 const bodyParser = require('body-parser');
+const mw = require('../middlewares/isAllowed');
+const { ADMIN, COCINERO, MOZO } = require('../constants/roles');
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -11,7 +13,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 
-app.post('/api/v1/pedidos', function (req, res) {
+app.post('/api/v1/pedidos', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     let pedido = req.body;
 
     pedidosDAO.post(pedido, function (err, pedido) {
@@ -26,7 +28,7 @@ app.post('/api/v1/pedidos', function (req, res) {
     });
 });
 
-app.get('/api/v1/pedidos', function (req, res) {
+app.get('/api/v1/pedidos', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     pedidosDAO.getAll(function (err, pedidos) {
         if (err) 
             return res.status(400).json(err)
@@ -35,7 +37,7 @@ app.get('/api/v1/pedidos', function (req, res) {
     });
 });
 
-app.get('/api/v1/pedido/:id', function (req, res) {
+app.get('/api/v1/pedido/:id', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     let id = req.params.id;
 
     pedidosDAO.getById(id, function (err, pedido) {
@@ -46,7 +48,7 @@ app.get('/api/v1/pedido/:id', function (req, res) {
     });
 });
 
-app.get('/api/v1/pedidos/PendAndEnt', function (req, res) {
+app.get('/api/v1/pedidos/PendAndEnt', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     pedidosDAO.getPendAndEnt(function (err, pedidos) {
         if (err) 
             return res.status(400).json(err)
@@ -55,7 +57,7 @@ app.get('/api/v1/pedidos/PendAndEnt', function (req, res) {
     });
 });
 
-app.get('/api/v1/pedidos/pendientes', function (req, res) {
+app.get('/api/v1/pedidos/pendientes', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     pedidosDAO.getPendientes(function (err, pedidos) {
         if (err) 
             return res.status(400).json(err)
@@ -64,7 +66,7 @@ app.get('/api/v1/pedidos/pendientes', function (req, res) {
     });
 });
 
-app.get('/api/v1/pedidos/entregados', function (req, res) {
+app.get('/api/v1/pedidos/entregados', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     pedidosDAO.getEntregados(function (err, pedidos) {
         if (err) 
             return res.status(400).json(err)
@@ -73,7 +75,7 @@ app.get('/api/v1/pedidos/entregados', function (req, res) {
     });
 });
 
-app.get('/api/v1/pedidos/listos', function (req, res) {
+app.get('/api/v1/pedidos/listos', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     pedidosDAO.getListos(function (err, pedidos) {
         if (err) 
             return res.status(400).json(err)
@@ -82,7 +84,7 @@ app.get('/api/v1/pedidos/listos', function (req, res) {
     });
 });
 
-app.get('/api/v1/pedidos/mozo/:id', function (req, res) {
+app.get('/api/v1/pedidos/mozo/:id', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     let id = req.params.id;
     pedidosDAO.getPedidoMozo(id, function (err, pedidos) {
         if (err) 
@@ -92,7 +94,7 @@ app.get('/api/v1/pedidos/mozo/:id', function (req, res) {
     });
 });
 
-app.put('/api/v1/pedidos', function (req, res) {
+app.put('/api/v1/pedidos', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     let pedido = req.body;
     pedidosDAO.put(pedido, function (err, pedidos) {
 
@@ -103,7 +105,7 @@ app.put('/api/v1/pedidos', function (req, res) {
     });
 });
 
-app.delete('/api/v1/pedido/:id', function (req, res) {
+app.delete('/api/v1/pedido/:id', mw.isAllowed([COCINERO, MOZO]), function (req, res) {
     let id = req.params.id;
 
     pedidosDAO.deleteOne(id, function (err, pedido) {
@@ -114,7 +116,7 @@ app.delete('/api/v1/pedido/:id', function (req, res) {
     });
 });
 
-app.delete('/api/v1/pedidos/deleteAll', function (req, res) {
+app.delete('/api/v1/pedidos/deleteAll', mw.isAllowed([ADMIN]), function (req, res) {
     pedidosDAO.deleteAll(function (err, pedidos) {
         if (err) 
             return res.status(400).json(err)

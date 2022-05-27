@@ -2,11 +2,13 @@ const express = require('express');
 const app = express();
 const { usersDAO } = require('../server');
 const bodyParser = require('body-parser');
+const mw = require('../middlewares/isAllowed');
+const { ADMIN } = require('../constants/roles');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post('/api/v1/usuarios', function (req, res) {
+app.post('/api/v1/usuarios', mw.isAllowed([ADMIN]), function (req, res) {
   let usuario = req.body;
   let fc_alta = new Date();
   usuario.fecha_alta = fc_alta;
@@ -23,7 +25,7 @@ app.post('/api/v1/usuarios', function (req, res) {
   });
 });
 
-app.get('/api/v1/usuarios', function (req, res) {
+app.get('/api/v1/usuarios', mw.isAllowed([ADMIN]), function (req, res) {
   usersDAO.getAll(function (err, user) {
     if (err) {
       return res.send({
@@ -36,7 +38,7 @@ app.get('/api/v1/usuarios', function (req, res) {
   });
 });
 
-app.get('/api/v1/usuarios/:id', function (req, res) {
+app.get('/api/v1/usuarios/:id', mw.isAllowed([ADMIN]), function (req, res) {
   let id = req.params.id;
 
   usersDAO.getById(id, function (err, user) {
@@ -51,7 +53,7 @@ app.get('/api/v1/usuarios/:id', function (req, res) {
   });
 });
 
-app.put('/api/v1/usuarios', function (req, res) {
+app.put('/api/v1/usuarios', mw.isAllowed([ADMIN]), function (req, res) {
   usersDAO.put(req.body, function (err, userUpdated) {
       if (err) {
         return res.send({
@@ -64,7 +66,7 @@ app.put('/api/v1/usuarios', function (req, res) {
   });
 });
 
-app.delete('/api/v1/usuarios/:id', function (req, res) {
+app.delete('/api/v1/usuarios/:id', mw.isAllowed([ADMIN]), function (req, res) {
   let id = req.params.id;
 
   usersDAO.delete(id, function (err, usuario) {

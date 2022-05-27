@@ -9,9 +9,9 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
 /* Mongodb config */
 var mdbconf = {
-    host: 'localhost',
-    port: '27017',
-    db: 'app_habb'
+    host: process.env.MONGO_HOST,
+    port: process.env.MONGO_PORT,
+    db: process.env.MONGO_DATABASE
 };
 
 module.exports.mdbconf = mdbconf;
