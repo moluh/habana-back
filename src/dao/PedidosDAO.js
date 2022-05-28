@@ -1,15 +1,15 @@
 function PedidosDAO(db) {
+    let ObjectId = require("mongodb").ObjectId;
 
-    let ObjectId = require('mongodb').ObjectId;
-
-    if (false == (this instanceof PedidosDAO)) {
-        console.log('WARNING: PedidosDAO constructor called without "new" operator');
+    if (false == this instanceof PedidosDAO) {
+        console.log(
+            'WARNING: PedidosDAO constructor called without "new" operator'
+        );
         return new PedidosDAO(db);
     }
 
-    let database = db.db('app_habb');
-    let pedidos = database.collection('pedidos')
-
+    let database = db.db("app_habb");
+    let pedidos = database.collection("pedidos");
 
     const updateCounterAndCreateOrder = (pedido, callback) => {
         pedidos.findOneAndUpdate(
@@ -25,14 +25,15 @@ function PedidosDAO(db) {
                     if (err) return callback(err, null);
                     return callback(null, result);
                 });
-            });
-    }
+            }
+        );
+    };
 
     const createCounterAndCreateOrder = (pedido, callback) => {
         pedidos.insertOne(
             {
                 nro_pedido: "numeroPed",
-                sequence_value: 2
+                sequence_value: 2,
             },
             function (err, result) {
                 if (err) return callback(err, null);
@@ -44,9 +45,8 @@ function PedidosDAO(db) {
                     return callback(null, result);
                 });
             }
-        )
-    }
-
+        );
+    };
 
     this.post = function (pedido, callback) {
         // Primer documento que debe haber en la BD para hacer el increment de nro_pedido:
@@ -62,176 +62,176 @@ function PedidosDAO(db) {
 
                 if (!ped) {
                     // Si no se encuentra, lo creamos
-                    createCounterAndCreateOrder(pedido, callback)
+                    createCounterAndCreateOrder(pedido, callback);
                 } else {
                     // Si se encuentra el contador, hacemos update + post del pedido
-                    updateCounterAndCreateOrder(pedido, callback)
+                    updateCounterAndCreateOrder(pedido, callback);
                 }
-            })
-    }
+            }
+        );
+    };
 
     this.getAll = function (callback) {
-        pedidos.find(
-            {
+        pedidos
+            .find({
                 nro_pedido: {
-                    $ne: 'numeroPed'
-                }
+                    $ne: "numeroPed",
+                },
             })
             .sort({
                 fecha: -1,
-                hora: -1
+                hora: -1,
             })
             .toArray(function (err, pedidos) {
-                if (err)
-                    return callback('No hay pedidos aún', null);
+                if (err) return callback("No hay pedidos aún", null);
 
                 return callback(null, pedidos);
             });
-    }
+    };
 
     this.getById = function (id, callback) {
-        pedidos.findOne({ "_id": ObjectId(id) },
-            function (err, pedido) {
-                if (err) {
-                    let msgError = "No se encontró ningún Pedido"
-                    return callback(msgError, null)
-                }
-                return callback(null, pedido);
-            })
-    }
+        pedidos.findOne({ _id: ObjectId(id) }, function (err, pedido) {
+            if (err) {
+                let msgError = "No se encontró ningún Pedido";
+                return callback(msgError, null);
+            }
+            return callback(null, pedido);
+        });
+    };
 
     this.getPendAndEnt = function (callback) {
-        pedidos.find(
-            {
-                estado: { $ne: 'Listo' },
-                nro_pedido: { $ne: 'numeroPed' }
+        pedidos
+            .find({
+                estado: { $ne: "Listo" },
+                nro_pedido: { $ne: "numeroPed" },
             })
             .sort({
                 fecha: 1,
-                hora: 1
+                hora: 1,
             })
             .toArray(function (err, pedidos) {
-                if (err)
-                    return callback("No se encontró ningún Pedido", null)
+                if (err) return callback("No se encontró ningún Pedido", null);
 
                 return callback(null, pedidos);
-            })
-    }
+            });
+    };
 
     this.getPendientes = function (callback) {
-        pedidos.find({
-            estado: { $eq: 'Pendiente' },
-            nro_pedido: { $ne: 'numeroPed' }
-        })
+        pedidos
+            .find({
+                estado: { $eq: "Pendiente" },
+                nro_pedido: { $ne: "numeroPed" },
+            })
             .sort({
                 fecha: -1,
-                hora: -1
+                hora: -1,
             })
             .toArray(function (err, pedidos) {
                 if (err) {
-                    let msgError = "No se encontró ningún Pedido"
-                    return callback(msgError, null)
+                    let msgError = "No se encontró ningún Pedido";
+                    return callback(msgError, null);
                 }
                 return callback(null, pedidos);
-            })
-    }
+            });
+    };
 
     this.getEntregados = function (callback) {
-        pedidos.find({
-            estado: { $eq: 'Entregado' },
-            nro_pedido: { $ne: 'numeroPed' }
-        })
+        pedidos
+            .find({
+                estado: { $eq: "Entregado" },
+                nro_pedido: { $ne: "numeroPed" },
+            })
             .sort({
                 fecha: -1,
-                hora: -1
+                hora: -1,
             })
             .limit(50)
             .toArray(function (err, pedidos) {
                 if (err) {
-                    let msgError = "No se encontró ningún Pedido"
-                    return callback(msgError, null)
+                    let msgError = "No se encontró ningún Pedido";
+                    return callback(msgError, null);
                 }
                 return callback(null, pedidos);
-            })
-    }
+            });
+    };
 
     this.getListos = function (callback) {
-        pedidos.find({
-            estado: { $eq: 'Listo' },
-            nro_pedido: { $ne: 'numeroPed' }
-        })
+        pedidos
+            .find({
+                estado: { $eq: "Listo" },
+                nro_pedido: { $ne: "numeroPed" },
+            })
             .sort({
                 fecha: -1,
-                hora: -1
+                hora: -1,
             })
             .limit(50)
             .toArray(function (err, pedidos) {
                 if (err) {
-                    let msgError = "No se encontró ningún Pedido"
-                    return callback(msgError, null)
+                    let msgError = "No se encontró ningún Pedido";
+                    return callback(msgError, null);
                 }
                 return callback(null, pedidos);
-            })
-    }
+            });
+    };
 
     this.getPedidoMozo = function (id, callback) {
-        pedidos.find({ "usuario._id": { $eq: id } })
+        pedidos
+            .find({ "usuario._id": { $eq: id } })
             .sort({
                 fecha: -1,
-                hora: -1
+                hora: -1,
             })
             .limit(50)
             .toArray(function (err, pedidos) {
                 if (err) {
-                    let msgError = "No se encontró ningún Pedido"
-                    return callback(msgError, null)
+                    let msgError = "No se encontró ningún Pedido";
+                    return callback(msgError, null);
                 }
                 return callback(null, pedidos);
-            })
-    }
+            });
+    };
 
     this.put = function (ped, callback) {
         pedidos.findOneAndUpdate(
-            { "_id": ObjectId(ped._id) },
+            { _id: ObjectId(ped._id) },
             {
                 $set: {
-                    "fecha": ped.fecha,
-                    "hora": ped.hora,
-                    "descripcion": ped.descripcion,
-                    "estado": ped.estado,
-                    "usuario": ped.usuario,
-                    "mesa": ped.mesa,
-                    "productos": ped.productos,
-                }
+                    fecha: ped.fecha,
+                    hora: ped.hora,
+                    descripcion: ped.descripcion,
+                    estado: ped.estado,
+                    usuario: ped.usuario,
+                    mesa: ped.mesa,
+                    productos: ped.productos,
+                },
             },
             { returnOriginal: false },
             function (err, ped) {
                 if (err) throw err;
 
-                console.log('Nueva pedido actualizado');
+                console.log("Nueva pedido actualizado");
 
                 return callback(null, ped.value);
-            });
-    }
+            }
+        );
+    };
 
     this.deleteAll = function (callback) {
         // deleteMany() usa 'filter' para eliminar datos que coincidan
         // Pasamos un objeto vacio, para eliminar toda la collecion
-        pedidos.deleteMany({},
-            function (err, data) {
-                if (err) throw new Error(err);
-                return callback(null, data)
-            });
-    }
+        pedidos.deleteMany({}, function (err, data) {
+            if (err) throw new Error(err);
+            return callback(null, data);
+        });
+    };
 
     this.deleteOne = function (id, callback) {
-        pedidos.deleteOne({ "_id": ObjectId(id) },
-            function (err, data) {
-                if (err) throw err;
-                return callback(null, data)
-            });
-    }
-
+        pedidos.deleteOne({ _id: ObjectId(id) }, function (err, data) {
+            if (err) throw err;
+            return callback(null, data);
+        });
+    };
 }
 
 module.exports.PedidosDAO = PedidosDAO;

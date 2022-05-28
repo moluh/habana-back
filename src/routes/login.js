@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const bodyParser = require('body-parser');
-const { usersDAO } = require('../server');
+const bodyParser = require("body-parser");
+const { usersDAO } = require("../server");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.post('/api/v1/login', async function (req, res) {
+app.post("/api/v1/login", async function (req, res) {
     const { username, password } = { ...req.body };
     usersDAO.validateLogin(username, password, function (err, usuario) {
         if (err) {
@@ -15,7 +15,6 @@ app.post('/api/v1/login', async function (req, res) {
             res.send(usuario);
         }
     });
-
 });
 
 module.exports = app;
